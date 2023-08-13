@@ -9,44 +9,46 @@ from tkinter import ttk
 
 def menu_ui() -> None:
     """Create the menu frame that appears when starting this program."""
-    menu_frame = ttk.Frame(root, style="Outmost.TFrame", padding=OUTMOST_FRAME_PADDING)
+    menu_frame = ttk.Frame(root, style="Outmost.TFrame",
+                           padding=OUTMOST_FRAME_PADDING)
     menu_frame.grid(row=0, column=0)
 
-    menu_label1 = ttk.Label(menu_frame, text="Generate new Sudoku", style="Header.TLabel")
+    menu_label1 = ttk.Label(
+        menu_frame, text="Generate new Sudoku", style="Header.TLabel")
     menu_label1.grid(row=0, column=0, columnspan=2, sticky=tk.W)
 
-    menu_difficulty_label = ttk.Label(menu_frame, text="Difficulty", style="Text.TLabel")
+    menu_difficulty_label = ttk.Label(
+        menu_frame, text="Difficulty", style="Text.TLabel")
     menu_difficulty_label.grid(row=1, column=0)
 
     difficulty = tk.DoubleVar()
     menu_difficulty_scale = ttk.Scale(menu_frame, orient=tk.HORIZONTAL,
-                                     from_=1, to=5, variable=difficulty,
-                                     command=lambda n: difficulty.set(round(float(n))))
+                                      from_=1, to=5, variable=difficulty,
+                                      command=lambda n: difficulty.set(round(float(n))))
     menu_difficulty_scale.set(3)
     menu_difficulty_scale.grid(row=1, column=1)
 
-    # button_width = 18
     menu_generate_button = ttk.Button(menu_frame, text="Generate New",
-                                     command=lambda: initialize_sudoku(menu_frame,
-                                                                       difficulty.get()))
+                                      command=lambda: initialize_sudoku(menu_frame,
+                                                                        difficulty.get()))
     menu_generate_button.grid(row=2, column=0, columnspan=2)
 
     menu_label2 = ttk.Label(menu_frame, text="or", style="Text.TLabel")
     menu_label2.grid(row=3, column=0, columnspan=2)
 
     menu_load_button = ttk.Button(menu_frame,
-                                 text="Load From File",
-                                 command=lambda: load_from_file(menu_frame))
+                                  text="Load From File",
+                                  command=lambda: load_from_file(menu_frame))
     menu_load_button.grid(row=4, column=0, columnspan=2)
 
     for child in menu_frame.winfo_children():
-        child.grid_configure(padx=2.5, pady=2.5)
+        child.grid_configure(padx=2.5, pady=5)
 
 
 def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
               solved_sudoku_board: list[list[int | None]]) -> None:
     """Create the main sudoku window with all its functionality.
-    
+
     Bonus: Keep track of remaining hearts and hints."""
     global elapsed_time
     global is_done
@@ -64,46 +66,46 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
         x) for sublist in unsolved_sudoku_board for x in sublist]
 
     global main_frame
-    main_frame = ttk.Frame(root, style="Outmost.TFrame", padding=OUTMOST_FRAME_PADDING)
+    main_frame = ttk.Frame(root, style="Outmost.TFrame",
+                           padding=OUTMOST_FRAME_PADDING)
     main_frame.grid(row=0, column=0)
 
     global label_and_button_frame
     label_and_button_frame = ttk.Frame(main_frame)
     label_and_button_frame.grid(row=0, column=0, rowspan=2, columnspan=5)
 
-    # label_font = FONT_SMALL
     difficulty_level = get_difficulty_level(unsolved_sudoku_as_one_list)
     global game_difficulty_text
     game_difficulty_text = f"Difficulty = {difficulty_level}"
     game_difficulty_label = ttk.Label(label_and_button_frame,
-                                     text=game_difficulty_text, style="Text.TLabel")
+                                      text=game_difficulty_text, style="Text.TLabel")
     game_difficulty_label.grid(row=0, column=0)
-    game_timer_label = ttk.Label(label_and_button_frame, text="Time: 00:00:00", style="Text.TLabel")
+    game_timer_label = ttk.Label(
+        label_and_button_frame, text="Time: 00:00:00", style="Text.TLabel")
     game_timer_label.grid(row=0, column=4)
     status_text = f"Hearts: {ERROR_THRESHOLD} | Hints: {HINT_THRESHOLD}"
-    game_status_label = ttk.Label(label_and_button_frame, text=status_text, style="Text.TLabel")
+    game_status_label = ttk.Label(
+        label_and_button_frame, text=status_text, style="Text.TLabel")
     game_status_label.grid(row=0, column=1, columnspan=3)
 
-    # button_font = FONT_MEDIUM
-    # button_width = 13
     game_hint_button = ttk.Button(label_and_button_frame, text="Get Hint",
-                                 command=get_hint)
+                                  command=get_hint)
     game_hint_button.grid(row=1, column=0)
     game_solution_button = ttk.Button(label_and_button_frame, text="Show Solution",
-                                     
-                                     command=show_solution)
+
+                                      command=show_solution)
     game_solution_button.grid(row=1, column=1)
     game_clear_button = ttk.Button(label_and_button_frame, text="Clear Input",
-                                  
-                                  command=clear_input)
+
+                                   command=clear_input)
     game_clear_button.grid(row=1, column=2)
     game_load_button = ttk.Button(label_and_button_frame, text="Load From File",
-                                 
-                                 command=lambda: confirmation_ui(True))
+
+                                  command=lambda: confirmation_ui(True))
     game_load_button.grid(row=1, column=3)
     game_generate_button = ttk.Button(label_and_button_frame, text="Generate New",
-                                     
-                                     command=lambda: confirmation_ui())
+
+                                      command=lambda: confirmation_ui())
     game_generate_button.grid(row=1, column=4)
 
     for child in label_and_button_frame.winfo_children():
@@ -162,31 +164,32 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
 def confirmation_ui(from_file: bool = False):
     """Create a screen that asks a user for confirmation if they really
     want to load/generate a new sudoku."""
-    frame = ttk.Frame(root, style="Outmost.TFrame", padding=OUTMOST_FRAME_PADDING)
+    frame = ttk.Frame(root, style="Outmost.TFrame",
+                      padding=OUTMOST_FRAME_PADDING)
     frame.grid(row=0, column=0)
 
-    label = ttk.Label(frame, text="Do you really want to quit?", style="Header.TLabel")
+    label = ttk.Label(
+        frame, text="Do you really want to quit?", style="Header.TLabel")
     label.grid(row=0, column=0, columnspan=2)
 
     sub_frame = ttk.Frame(frame)
     sub_frame.grid(row=1, column=0, columnspan=2)
 
-    # width = 10
     match from_file:
         case False:
             yes_button = ttk.Button(sub_frame, text="Yes",
-                                   command=lambda: difficulty_scale_ui(frame))
+                                    command=lambda: difficulty_scale_ui(frame))
         case True:
             yes_button = ttk.Button(sub_frame, text="Yes",
-                                   command=lambda: load_from_file(frame))
+                                    command=lambda: load_from_file(frame))
     yes_button.grid(row=0, column=0)
 
     no_button = ttk.Button(sub_frame, text="No",
-                          command=frame.destroy)
+                           command=frame.destroy)
     no_button.grid(row=0, column=1)
 
-    # for child in sub_frame.winfo_children():
-    #     child.grid_configure(padx=5, pady=(15, 20))
+    for child in sub_frame.winfo_children():
+        child.grid_configure(padx=5, pady=20)
 
     # focus this frame and block interaction with sudoku frame until
     # user decided if she/he really wants to quit
@@ -194,36 +197,37 @@ def confirmation_ui(from_file: bool = False):
     frame.grab_set()
 
 
-def difficulty_scale_ui(old_frame: tk.Frame):
+def difficulty_scale_ui(old_frame: ttk.Frame):
     """Let the user select the difficulty of the newly generated 
     Sudoku."""
     old_frame.destroy()
     main_frame.destroy()
 
-    frame = ttk.Frame(root, style="Outmost.TFrame", padding=OUTMOST_FRAME_PADDING)
+    frame = ttk.Frame(root, style="Outmost.TFrame",
+                      padding=OUTMOST_FRAME_PADDING)
     frame.grid(row=0, column=0)
 
-    label = ttk.Label(frame, text="Select a difficulty", style="Header.TLabel")
+    label = ttk.Label(frame, text="Select Difficulty", style="Header.TLabel")
     label.grid(row=0, column=0)
 
     difficulty = tk.DoubleVar()
     difficulty_scale = ttk.Scale(frame, orient=tk.HORIZONTAL,
-                                     from_=1, to=5, variable=difficulty,
-                                     command=lambda n: difficulty.set(round(float(n))))
+                                 from_=1, to=5, variable=difficulty,
+                                 command=lambda n: difficulty.set(round(float(n))))
     difficulty_scale.set(3)
     difficulty_scale.grid(row=1, column=0)
 
     generate_button = ttk.Button(frame, text="Generate New",
-                                command=lambda: initialize_sudoku(frame, 
-                                                                  difficulty.get()))
+                                 command=lambda: initialize_sudoku(frame,
+                                                                   difficulty.get()))
     generate_button.grid(row=2, column=0)
-    
-    # for child in frame.winfo_children():
-    #     if isinstance(child, ttk.Button):
-    #         child.grid_configure(pady=10)
-    #     else:
-    #         child.grid_configure(pady=5)
-            
+
+    for child in frame.winfo_children():
+        if isinstance(child, ttk.Button):
+            child.grid_configure(pady=10)
+        else:
+            child.grid_configure(pady=5)
+
 
 def initialize_sudoku(frame: ttk.Frame, difficulty: float,
                       convert=True) -> None:
@@ -308,7 +312,6 @@ def auto_check_input(event: tk.Event, true_input: str) -> None:
         if check_sudoku_solved():
             lock_game_ui(SUCCESS_MESSAGE, SUCCESS_COLOR)
     else:
-        # entry["fieldbackground"] = FAIL_COLOR
         entry.configure(style="Fail.TEntry")
         global errors
         errors += 1
@@ -318,8 +321,8 @@ def auto_check_input(event: tk.Event, true_input: str) -> None:
         global is_done
         is_done = True
         lock_game_ui(FAIL_MESSAGE, FAIL_COLOR)
-            
-            
+
+
 def get_hint() -> None:
     """Users can ask for a hint, if they get stuck. The hint is the
     correct value for one of the EMPTY cells.
@@ -328,7 +331,7 @@ def get_hint() -> None:
     the threshold disable button."""
     global hints
     hints += 1
-    
+
     entries = [entry for entry in entry_frame.winfo_children()
                if isinstance(entry, ttk.Entry)]
     current_board = get_current_board()
@@ -352,8 +355,7 @@ def get_hint() -> None:
 
     if hints == HINT_THRESHOLD:
         for button in label_and_button_frame.winfo_children():
-            if isinstance(button, tk.Button) and button.cget("text") == "Get Hint":
-                button["background"] = BUTTON_DISABLED_COLOR
+            if isinstance(button, ttk.Button) and button.cget("text") == "Get Hint":
                 button["state"] = tk.DISABLED
                 break
 
@@ -361,9 +363,12 @@ def get_hint() -> None:
 def show_solution() -> None:
     """Show the solution to this sudoku and lock the UI."""
     for idx, entry in enumerate(entry_frame.winfo_children()):
-        if isinstance(entry, tk.Entry) and entry["state"] == tk.NORMAL:
+        
+        # for some reason I had to rewrite entry["state"] to entry.state()
+        # normal state is displayed via an empty Tuple
+        if isinstance(entry, ttk.Entry) and entry.state() == ():
             entry.delete(0, tk.END)
-            entry["background"] = DEFAULT_ENTRY_COLOR
+            entry.configure(style="TEntry")
             entry.insert(0, solved_sudoku_as_one_list[idx])
     if check_sudoku_solved():
         lock_game_ui(FAIL_MESSAGE, FAIL_COLOR)
@@ -372,12 +377,12 @@ def show_solution() -> None:
 def clear_input() -> None:
     """Clear all the user inputs so far and reset colors."""
     for entry in entry_frame.winfo_children():
-        if isinstance(entry, tk.Entry) and entry["state"] == tk.NORMAL:
+        if isinstance(entry, ttk.Entry) and entry.state() == ():
             entry.delete(0, tk.END)
-            entry["background"] = DEFAULT_ENTRY_COLOR
+            entry.configure(style="TEntry")
 
 
-def load_from_file(frame: tk.Frame) -> None:
+def load_from_file(frame: ttk.Frame) -> None:
     """Load a possible sudoku grid from file and check if it is 
     compatible with the expected format and can be solved."""
     frame.destroy()
@@ -414,7 +419,7 @@ def load_from_file(frame: tk.Frame) -> None:
         else:
             root.destroy()
             raise Exception(wrong_file)
-        
+
 
 def file_validation(content: list) -> bool:
     """Perform some basic file content validation.
@@ -445,9 +450,9 @@ def file_validation(content: list) -> bool:
 def update_status_label() -> None:
     """Update the status label with the remaining hearts and hints."""
     for child in label_and_button_frame.winfo_children():
-        if isinstance(child, tk.Label) and child.cget("text")[0:6] == "Hearts":
+        if isinstance(child, ttk.Label) and child.cget("text")[0:6] == "Hearts":
             child["text"] = f"Hearts: {ERROR_THRESHOLD - errors} | Hints: {HINT_THRESHOLD - hints}"
-            
+
 
 def check_sudoku_solved() -> bool:
     """Check if the sudoku has been solved."""
@@ -465,12 +470,11 @@ def lock_game_ui(message: str, color: str):
     "show solution" display a different message."""
     unlocked_buttons = ["Load From File", "Generate New"]
     for child in label_and_button_frame.winfo_children():
-        if isinstance(child, tk.Button):
+        if isinstance(child, ttk.Button):
             if child.cget("text") not in unlocked_buttons:
-                child["background"] = BUTTON_DISABLED_COLOR
                 child["state"] = tk.DISABLED
 
-        elif isinstance(child, tk.Label):
+        elif isinstance(child, ttk.Label):
             child["foreground"] = WHITE
             child["background"] = color
             if child.cget("text") == game_difficulty_text:
@@ -492,7 +496,7 @@ def update_timer() -> None:
         minutes = (elapsed_time % 3600) // 60
         seconds = elapsed_time % 60
         for child in label_and_button_frame.winfo_children():
-            if isinstance(child, tk.Label)\
+            if isinstance(child, ttk.Label)\
                     and child.cget("text")[0:4] == "Time":
                 child["text"] = f"Time: {hours:02}:{minutes:02}:{seconds:02}"
 
@@ -502,7 +506,7 @@ def update_timer() -> None:
 
 def get_current_board() -> list[str]:
     """Return the current state of the board"""
-    return [entry.get() for entry in entry_frame.winfo_children() if isinstance(entry, tk.Entry)]
+    return [entry.get() for entry in entry_frame.winfo_children() if isinstance(entry, ttk.Entry)]
 
 
 if __name__ == "__main__":
@@ -515,7 +519,7 @@ if __name__ == "__main__":
     DIFFICULTIES = [0.51, 0.57, 0.63, 0.68, 0.72]
     ERROR_THRESHOLD = 3
     HINT_THRESHOLD = 3
-    
+
     OUTMOST_FRAME_PADDING = 50
     ENTRY_WIDTH = 3
 
@@ -551,20 +555,18 @@ if __name__ == "__main__":
 
     root.columnconfigure(index=0, weight=1)
     root.rowconfigure(index=0, weight=1)
-    
+
     style = ttk.Style()
     style.theme_use("default")
-    
+
     style.configure("TFrame", background=WHITE)
     style.configure("Outmost.TFrame", relief=tk.SOLID, borderwidth=1)
     style.configure("SudokuBoard.TFrame", background=COLOR1)
-    
+
     style.configure("TLabel", background=WHITE)
     style.configure("Header.TLabel", font=FONT_VERY_LARGE, foreground=COLOR1)
     style.configure("Text.TLabel", font=FONT_SMALL)
-    
-    style.configure("TButton", width = 15, justify=tk.CENTER, font=FONT_MEDIUM, background=COLOR2, foreground=WHITE)
-    style.map("TButton", background=[("pressed", COLOR2_SHADE), ("active", COLOR2_SHADE)])
+
     # use something like this to find out more about the options you can
     # configure:
     # print(style.layout("TButton"))
@@ -573,15 +575,16 @@ if __name__ == "__main__":
     # print(style.element_options("TButton.Button.focus"))
     # print(style.element_options("TButton.Button.border"))
     # print(style.lookup('TButton', 'width'))
-    
+    style.configure("TButton", width=15, justify=tk.CENTER, font=FONT_MEDIUM,
+                    background=COLOR2, focuscolor=COLOR2, foreground=WHITE)
+    style.map("TButton",
+              background=[("pressed", COLOR2_SHADE),
+                          ("disabled", COLOR1), ("active", COLOR2_SHADE)],
+              focuscolor=[("pressed", COLOR2_SHADE), ("disabled", COLOR1), ("active", COLOR2_SHADE)])
+
     style.configure("TEntry")
     style.configure("Fail.TEntry", fieldbackground=FAIL_COLOR)
     style.configure("Hint.TEntry", fieldbackground=COLOR2)
-    print(style.layout("TEntry"))
-    print(style.element_options("TEntry.Entry.field"))
-    print(style.element_options("TEntry.Entry.padding"))
-    print(style.element_options("TEntry.Entry.textarea"))
-    # print(style.element_options("TButton.Button.border"))
 
     menu_ui()
     root.mainloop()
