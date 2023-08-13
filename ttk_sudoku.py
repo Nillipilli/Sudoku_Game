@@ -225,7 +225,7 @@ def difficulty_scale_ui(old_frame: tk.Frame):
     #         child.grid_configure(pady=5)
             
 
-def initialize_sudoku(frame: tk.Frame, difficulty: float,
+def initialize_sudoku(frame: ttk.Frame, difficulty: float,
                       convert=True) -> None:
     """Initialize the sudoku UI with the given difficulty.
 
@@ -297,19 +297,19 @@ def auto_check_input(event: tk.Event, true_input: str) -> None:
     Bonus: Keep track of errors and if user has too many errors lock
     UI."""
     entry = event.widget
-    print(entry["background"])
     current_value = entry.get()
     if current_value not in ALLOWED_CHARS:
         entry.delete(0, tk.END)
-        entry["background"] = DEFAULT_ENTRY_COLOR
+        entry.configure(style="TEntry")
     elif current_value == "":
-        entry["background"] = DEFAULT_ENTRY_COLOR
+        entry.configure(style="TEntry")
     elif current_value == true_input:
-        entry["background"] = DEFAULT_ENTRY_COLOR
+        entry.configure(style="TEntry")
         if check_sudoku_solved():
             lock_game_ui(SUCCESS_MESSAGE, SUCCESS_COLOR)
     else:
-        entry["fieldbackground"] = FAIL_COLOR
+        # entry["fieldbackground"] = FAIL_COLOR
+        entry.configure(style="Fail.TEntry")
         global errors
         errors += 1
         update_status_label()
@@ -330,7 +330,7 @@ def get_hint() -> None:
     hints += 1
     
     entries = [entry for entry in entry_frame.winfo_children()
-               if isinstance(entry, tk.Entry)]
+               if isinstance(entry, ttk.Entry)]
     current_board = get_current_board()
     if "" in current_board:
         indexes = [idx for idx, value in enumerate(
@@ -342,9 +342,9 @@ def get_hint() -> None:
 
         # change the background of the hint to highlight it more
         # and remove it after x milliseconds
-        entries[random_index]["background"] = COLOR2
+        entries[random_index].configure(style="Hint.TEntry")
         entries[random_index].after(
-            1000, lambda e=entries[random_index]: e.configure(background=BACKGROUND_COLOR))
+            1000, lambda e=entries[random_index]: e.configure(style="TEntry"))
 
         # check if sudoku is now solved
         if check_sudoku_solved():
@@ -554,19 +554,34 @@ if __name__ == "__main__":
     
     style = ttk.Style()
     style.theme_use("default")
-    style.configure("Outmost.TFrame", relief=tk.SOLID, background=WHITE, borderwidth=1)
-    print(style.element_options('Outmost.TFrame.Frame.border'))
-    style.configure("Header.TLabel", font=FONT_VERY_LARGE, foreground=COLOR1, background=WHITE)
-    style.configure("Text.TLabel", font=FONT_SMALL, background=WHITE)
-    print(style.layout("TLabel"))
-    style.configure("SudokuBoard.TFrame", background=COLOR1)
-    style.configure("TButton", width = 20)
-    style.configure("TEntry", fieldbackground="lightblue")
-    # print(style.lookup('Test.TFrame', 'padding'))
-    # style.configure('Emergency.TButton', font='helvetica 24', foreground='red', padding=10, width=10)
-    # style.theme_use("xpnative")
     
-    # ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
+    style.configure("TFrame", background=WHITE)
+    style.configure("Outmost.TFrame", relief=tk.SOLID, borderwidth=1)
+    style.configure("SudokuBoard.TFrame", background=COLOR1)
+    
+    style.configure("TLabel", background=WHITE)
+    style.configure("Header.TLabel", font=FONT_VERY_LARGE, foreground=COLOR1)
+    style.configure("Text.TLabel", font=FONT_SMALL)
+    
+    style.configure("TButton", width = 15, justify=tk.CENTER, font=FONT_MEDIUM, background=COLOR2, foreground=WHITE)
+    style.map("TButton", background=[("pressed", COLOR2_SHADE), ("active", COLOR2_SHADE)])
+    # use something like this to find out more about the options you can
+    # configure:
+    # print(style.layout("TButton"))
+    # print(style.element_options("TButton.Button.label"))
+    # print(style.element_options("TButton.Button.padding"))
+    # print(style.element_options("TButton.Button.focus"))
+    # print(style.element_options("TButton.Button.border"))
+    # print(style.lookup('TButton', 'width'))
+    
+    style.configure("TEntry")
+    style.configure("Fail.TEntry", fieldbackground=FAIL_COLOR)
+    style.configure("Hint.TEntry", fieldbackground=COLOR2)
+    print(style.layout("TEntry"))
+    print(style.element_options("TEntry.Entry.field"))
+    print(style.element_options("TEntry.Entry.padding"))
+    print(style.element_options("TEntry.Entry.textarea"))
+    # print(style.element_options("TButton.Button.border"))
 
     menu_ui()
     root.mainloop()
