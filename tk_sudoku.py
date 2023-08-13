@@ -278,7 +278,7 @@ def difficulty_scale_ui(old_frame: tk.Frame):
                      background=BACKGROUND_COLOR)
     frame.grid(row=0, column=0)
 
-    label = tk.Label(frame, text="Select a difficulty",
+    label = tk.Label(frame, text="Select Difficulty",
                      font=FONT_VERY_LARGE, foreground=COLOR1,
                      background=WHITE)
     label.grid(row=0, column=0)
