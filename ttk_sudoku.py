@@ -363,7 +363,7 @@ def get_hint() -> None:
 def show_solution() -> None:
     """Show the solution to this sudoku and lock the UI."""
     for idx, entry in enumerate(entry_frame.winfo_children()):
-        
+
         # for some reason I had to rewrite entry["state"] to entry.state()
         # normal state is displayed via an empty Tuple
         if isinstance(entry, ttk.Entry) and entry.state() == ():
@@ -528,7 +528,7 @@ if __name__ == "__main__":
     FONT_MEDIUM = fnt.Font(family="Arial", size=14, weight="bold")
     FONT_LARGE = fnt.Font(family="Arial", size=16, weight="bold")
     FONT_VERY_LARGE = fnt.Font(family="Arial", size=18, weight="bold")
-    FONT_ENTRY = fnt.Font(family="Arial", size=28, weight="bold")
+    FONT_ENTRY = fnt.Font(family="Arial", size=26, weight="bold")
 
     BACKGROUND_COLOR = "white"
     COLOR1 = "#264653"
@@ -540,7 +540,7 @@ if __name__ == "__main__":
     WHITE = "white"
     BLACK = "black"
     DEFAULT_ENTRY_COLOR = "SystemWindow"
-    BUTTON_DISABLED_COLOR = "darkgray"
+    BUTTON_DISABLED_BG_COLOR = "darkgray"
     FAIL_COLOR = COLOR5
     SUCCESS_COLOR = COLOR2
 
@@ -579,12 +579,17 @@ if __name__ == "__main__":
                     background=COLOR2, focuscolor=COLOR2, foreground=WHITE)
     style.map("TButton",
               background=[("pressed", COLOR2_SHADE),
-                          ("disabled", COLOR1), ("active", COLOR2_SHADE)],
-              focuscolor=[("pressed", COLOR2_SHADE), ("disabled", COLOR1), ("active", COLOR2_SHADE)])
+                          ("disabled", BUTTON_DISABLED_BG_COLOR), ("active", COLOR2_SHADE)],
+              focuscolor=[("pressed", COLOR2_SHADE), ("disabled",
+                                                      BUTTON_DISABLED_BG_COLOR), ("active", COLOR2_SHADE)],
+              foreground=[("disabled", "SystemDisabledText")])
 
     style.configure("TEntry")
     style.configure("Fail.TEntry", fieldbackground=FAIL_COLOR)
     style.configure("Hint.TEntry", fieldbackground=COLOR2)
+
+    style.configure("TScale", troughcolor=COLOR2, background=COLOR2)
+    style.map("TScale", background=[("active", COLOR2_SHADE)])
 
     menu_ui()
     root.mainloop()

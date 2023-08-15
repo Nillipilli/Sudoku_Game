@@ -6,6 +6,17 @@ from sudoku import Sudoku
 from tkinter import filedialog
 
 
+def on_enter(e):
+    """Change the background color when hovering over a Button."""
+    e.widget['background'] = COLOR2_SHADE
+
+
+def on_leave(e):
+    """Reset the background color when not hovering over a Button 
+    anymore."""
+    e.widget['background'] = COLOR2
+
+
 def menu_ui() -> None:
     """Create the menu frame that appears when starting this program."""
     menu_frame = tk.Frame(root, borderwidth=1, relief=tk.SOLID,
@@ -30,20 +41,22 @@ def menu_ui() -> None:
                                      background=COLOR2,
                                      troughcolor=COLOR2,
                                      activebackground=COLOR2_SHADE,
-                                     highlightbackground=COLOR1)
+                                     highlightbackground=COLOR2_SHADE)
     menu_difficulty_scale.set(3)
     menu_difficulty_scale.grid(row=1, column=1)
 
     button_width = 18
     menu_generate_button = tk.Button(menu_frame, text="Generate New",
-                                     justify=tk.CENTER, font=FONT_MEDIUM,
-                                     width=button_width,
-                                     background=COLOR2,
-                                     foreground=WHITE,
-                                     activebackground=COLOR2_SHADE,
-                                     activeforeground=WHITE,
-                                     command=lambda: initialize_sudoku(menu_frame,
-                                                                       difficulty.get()))
+                                       justify=tk.CENTER, font=FONT_MEDIUM,
+                                       width=button_width,
+                                       background=COLOR2,
+                                       foreground=WHITE,
+                                       activebackground=COLOR2_SHADE,
+                                       activeforeground=WHITE,
+                                       takefocus=1,
+                                       highlightcolor=COLOR2_SHADE,
+                                       command=lambda: initialize_sudoku(menu_frame,
+                                                                         difficulty.get()))
     menu_generate_button.grid(row=2, column=0, columnspan=2)
 
     menu_label2 = tk.Label(menu_frame, text="or", font=FONT_SMALL,
@@ -63,12 +76,16 @@ def menu_ui() -> None:
 
     for child in menu_frame.winfo_children():
         child.grid_configure(padx=2.5, pady=5)
+        
+        if isinstance(child, tk.Button):
+            child.bind("<Enter>", on_enter)
+            child.bind("<Leave>", on_leave)
 
 
 def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
               solved_sudoku_board: list[list[int | None]]) -> None:
     """Create the main sudoku window with all its functionality.
-    
+
     Bonus: Keep track of remaining hearts and hints."""
     global elapsed_time
     global is_done
@@ -164,6 +181,8 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
     for child in label_and_button_frame.winfo_children():
         if isinstance(child, tk.Button):
             child.grid_configure(padx=3, pady=(10, 25))
+            child.bind("<Enter>", on_enter)
+            child.bind("<Leave>", on_leave)
 
     global entry_frame
     entry_frame = tk.Frame(main_frame, background=COLOR1)
@@ -261,6 +280,10 @@ def confirmation_ui(from_file: bool = False):
 
     for child in sub_frame.winfo_children():
         child.grid_configure(padx=5, pady=(15, 20))
+        
+        if isinstance(child, tk.Button):
+            child.bind("<Enter>", on_enter)
+            child.bind("<Leave>", on_leave)
 
     # focus this frame and block interaction with sudoku frame until
     # user decided if she/he really wants to quit
@@ -290,7 +313,7 @@ def difficulty_scale_ui(old_frame: tk.Frame):
                                 background=COLOR2,
                                 troughcolor=COLOR2,
                                 activebackground=COLOR2_SHADE,
-                                highlightbackground=COLOR1)
+                                highlightbackground=COLOR2_SHADE)
     difficulty_scale.set(3)
     difficulty_scale.grid(row=1, column=0)
 
@@ -300,16 +323,18 @@ def difficulty_scale_ui(old_frame: tk.Frame):
                                 foreground=WHITE,
                                 activebackground=COLOR2_SHADE,
                                 activeforeground=WHITE,
-                                command=lambda: initialize_sudoku(frame, 
+                                command=lambda: initialize_sudoku(frame,
                                                                   difficulty.get()))
     generate_button.grid(row=2, column=0)
-    
+
     for child in frame.winfo_children():
         if isinstance(child, tk.Button):
             child.grid_configure(pady=10)
+            child.bind("<Enter>", on_enter)
+            child.bind("<Leave>", on_leave)
         else:
             child.grid_configure(pady=5)
-            
+
 
 def initialize_sudoku(frame: tk.Frame, difficulty: float,
                       convert=True) -> None:
@@ -403,8 +428,8 @@ def auto_check_input(event: tk.Event, true_input: str) -> None:
         global is_done
         is_done = True
         lock_game_ui(FAIL_MESSAGE, FAIL_COLOR)
-            
-            
+
+
 def get_hint() -> None:
     """Users can ask for a hint, if they get stuck. The hint is the
     correct value for one of the EMPTY cells.
@@ -413,7 +438,7 @@ def get_hint() -> None:
     the threshold disable button."""
     global hints
     hints += 1
-    
+
     entries = [entry for entry in entry_frame.winfo_children()
                if isinstance(entry, tk.Entry)]
     current_board = get_current_board()
@@ -499,7 +524,7 @@ def load_from_file(frame: tk.Frame) -> None:
         else:
             root.destroy()
             raise Exception(wrong_file)
-        
+
 
 def file_validation(content: list) -> bool:
     """Perform some basic file content validation.
@@ -532,7 +557,7 @@ def update_status_label() -> None:
     for child in label_and_button_frame.winfo_children():
         if isinstance(child, tk.Label) and child.cget("text")[0:6] == "Hearts":
             child["text"] = f"Hearts: {ERROR_THRESHOLD - errors} | Hints: {HINT_THRESHOLD - hints}"
-            
+
 
 def check_sudoku_solved() -> bool:
     """Check if the sudoku has been solved."""
@@ -554,6 +579,7 @@ def lock_game_ui(message: str, color: str):
             if child.cget("text") not in unlocked_buttons:
                 child["background"] = BUTTON_DISABLED_COLOR
                 child["state"] = tk.DISABLED
+                print(child.cget("disabledforeground"))
 
         elif isinstance(child, tk.Label):
             child["foreground"] = WHITE
@@ -606,7 +632,7 @@ if __name__ == "__main__":
     FONT_MEDIUM = fnt.Font(family="Arial", size=14, weight="bold")
     FONT_LARGE = fnt.Font(family="Arial", size=16, weight="bold")
     FONT_VERY_LARGE = fnt.Font(family="Arial", size=18, weight="bold")
-    FONT_ENTRY = fnt.Font(family="Arial", size=24, weight="bold")
+    FONT_ENTRY = fnt.Font(family="Arial", size=26, weight="bold")
 
     BACKGROUND_COLOR = "white"
     COLOR1 = "#264653"
