@@ -7,14 +7,20 @@ from tkinter import filedialog
 
 
 def on_enter(e):
-    """Change the background color when hovering over a Button."""
-    e.widget['background'] = COLOR2_SHADE
+    """Change the background color when hovering over a Button.
+    
+    Only when button is not disabled."""
+    if e.widget["state"] != tk.DISABLED:
+        e.widget['background'] = COLOR2_SHADE
 
 
 def on_leave(e):
     """Reset the background color when not hovering over a Button 
-    anymore."""
-    e.widget['background'] = COLOR2
+    anymore.
+    
+    Only when button is not disabled."""
+    if e.widget["state"] != tk.DISABLED:
+        e.widget['background'] = COLOR2
 
 
 def menu_ui() -> None:
@@ -207,7 +213,6 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
         else:
             entry.insert(0, str(unsolved_sudoku_as_one_list[i]))
             entry["state"] = tk.DISABLED
-            print(entry["foreground"], entry["background"])
 
     for idx, child in enumerate(entry_frame.winfo_children()):
         padding = 7
@@ -350,22 +355,74 @@ def initialize_sudoku(frame: tk.Frame, difficulty: float,
     else:
         main_frame.destroy()
 
-    unsolved_sudoku = Sudoku(3, seed=random.randint(
-        1, 1_000_000)).difficulty(difficulty)
+    global solution_count
+    generated_sudoku_count = 1
+    while True:
+        solution_count = 0
+        unsolved_sudoku = Sudoku(3, seed=random.randint(
+            1, 1_000_000)).difficulty(difficulty)
+        solve_and_count_solutions(unsolved_sudoku.board)
+        
+        # found a sudoku that has only a single solution
+        if solution_count == 1:
+            break
+        print(f"Generated Sudoku {generated_sudoku_count} had multiple solutions")
+        generated_sudoku_count += 1
+        
     solved_sudoku = unsolved_sudoku.solve()
     sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
+
+
+def solve_and_count_solutions(board):
+    global solution_count
+    if solution_count > 1:
+        return
+    
+    for y in range(9):
+        for x in range(9):
+            if board[y][x] is None:
+                for n in range(1, 10):
+                    if possible_value_for_cell(y, x, n, board):
+                        board[y][x] = n
+                        solve_and_count_solutions(board)
+                        board[y][x] = None
+                return
+    solution_count += 1
+    
+    
+def possible_value_for_cell(y, x, n, board):
+    """Check whether a given value is possible in the given cell."""
+    # check row
+    for i in range(9):
+        if board[y][i] == n:
+            return False
+        
+    # check column
+    for i in range(9):
+        if board[i][x] == n:
+            return False
+        
+    # check square
+    y0 = (y//3) * 3
+    x0 = (x//3) * 3
+    for i in range(3):
+        for j in range(3):
+            if board[y0+i][x0+j] == n:
+                return False
+    return True
 
 
 def convert_slider_difficulty(difficulty: float) -> float:
     """Convert the selected slider position into a difficulty that makes
     sense for a Sudoku.
 
-    Based on some stuff I read here: https://shorturl.at/bMQ69
+    Based on ChatGPT suggestion and the fact that generating very hard
+    Sudokus with a single solution takes ages.
+    0.39 -> 31 cells unfilled -> 50 cells filled
+    0.45 -> 36 cells unfilled -> 45 cells filled
     0.51 -> 41 cells unfilled -> 40 cells filled
     0.57 -> 46 cells unfilled -> 35 cells filled
     0.63 -> 51 cells unfilled -> 30 cells filled
-    0.68 -> 55 cells unfilled -> 26 cells filled
-    0.72 -> 58 cells unfilled -> 23 cells filled
     """
     match difficulty:
         case 1:
@@ -389,13 +446,13 @@ def get_difficulty_level(unsolved_sudoku_as_one_list) -> str:
             filled_cells += 1
 
     difficulty_level = ""
-    if filled_cells <= 23:
+    if filled_cells <= 30:
         difficulty_level = "Very Hard"
-    elif filled_cells <= 26:
-        difficulty_level = "Hard"
-    elif filled_cells <= 30:
-        difficulty_level = "Medium"
     elif filled_cells <= 35:
+        difficulty_level = "Hard"
+    elif filled_cells <= 40:
+        difficulty_level = "Medium"
+    elif filled_cells <= 45:
         difficulty_level = "Easy"
     else:
         difficulty_level = "Very Easy"
@@ -580,7 +637,6 @@ def lock_game_ui(message: str, color: str):
             if child.cget("text") not in unlocked_buttons:
                 child["background"] = BUTTON_DISABLED_COLOR
                 child["state"] = tk.DISABLED
-                print(child.cget("disabledforeground"))
 
         elif isinstance(child, tk.Label):
             child["foreground"] = WHITE
@@ -620,11 +676,12 @@ def get_current_board() -> list[str]:
 if __name__ == "__main__":
     root = tk.Tk()
 
+    solution_count = 0
     FAIL_MESSAGE = "You can do better!"
     SUCCESS_MESSAGE = "Good job!"
     ALLOWED_CHARS = [str(x) for x in range(1, 10)]
     ALLOWED_CHARS_FOR_FILE = [str(x) for x in range(0, 10)]
-    DIFFICULTIES = [0.51, 0.57, 0.63, 0.68, 0.72]
+    DIFFICULTIES = [0.39, 0.45, 0.51, 0.57, 0.63]
     ERROR_THRESHOLD = 3
     HINT_THRESHOLD = 3
 
