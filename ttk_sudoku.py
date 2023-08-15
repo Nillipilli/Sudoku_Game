@@ -541,6 +541,7 @@ if __name__ == "__main__":
     BLACK = "black"
     DEFAULT_ENTRY_COLOR = "SystemWindow"
     BUTTON_DISABLED_BG_COLOR = "darkgray"
+    ENTRY_DISABLED_FG_COLOR = "gray"
     FAIL_COLOR = COLOR5
     SUCCESS_COLOR = COLOR2
 
@@ -557,6 +558,7 @@ if __name__ == "__main__":
     root.rowconfigure(index=0, weight=1)
 
     style = ttk.Style()
+    print(style.theme_names())
     style.theme_use("default")
 
     style.configure("TFrame", background=WHITE)
@@ -567,14 +569,6 @@ if __name__ == "__main__":
     style.configure("Header.TLabel", font=FONT_VERY_LARGE, foreground=COLOR1)
     style.configure("Text.TLabel", font=FONT_SMALL)
 
-    # use something like this to find out more about the options you can
-    # configure:
-    # print(style.layout("TButton"))
-    # print(style.element_options("TButton.Button.label"))
-    # print(style.element_options("TButton.Button.padding"))
-    # print(style.element_options("TButton.Button.focus"))
-    # print(style.element_options("TButton.Button.border"))
-    # print(style.lookup('TButton', 'width'))
     style.configure("TButton", width=15, justify=tk.CENTER, font=FONT_MEDIUM,
                     background=COLOR2, focuscolor=COLOR2, foreground=WHITE)
     style.map("TButton",
@@ -585,11 +579,21 @@ if __name__ == "__main__":
               foreground=[("disabled", "SystemDisabledText")])
 
     style.configure("TEntry")
+    style.map("TEntry", foreground=[("disabled", ENTRY_DISABLED_FG_COLOR)])
     style.configure("Fail.TEntry", fieldbackground=FAIL_COLOR)
     style.configure("Hint.TEntry", fieldbackground=COLOR2)
 
     style.configure("TScale", troughcolor=COLOR2, background=COLOR2)
     style.map("TScale", background=[("active", COLOR2_SHADE)])
+
+    # use something like this to find out more about the options you can
+    # configure:
+    # print(style.layout("TButton"))
+    # print(style.element_options("TButton.Button.label"))
+    # print(style.element_options("TButton.Button.padding"))
+    # print(style.element_options("TButton.Button.focus"))
+    # print(style.element_options("TButton.Button.border"))
+    # print(style.lookup('TButton', 'width'))
 
     menu_ui()
     root.mainloop()

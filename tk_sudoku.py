@@ -207,6 +207,7 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
         else:
             entry.insert(0, str(unsolved_sudoku_as_one_list[i]))
             entry["state"] = tk.DISABLED
+            print(entry["foreground"], entry["background"])
 
     for idx, child in enumerate(entry_frame.winfo_children()):
         padding = 7
