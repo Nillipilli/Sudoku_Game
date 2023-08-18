@@ -60,7 +60,7 @@ def menu_ui() -> None:
                                  foreground=WHITE,
                                  activebackground=COLOR2_SHADE,
                                  activeforeground=WHITE,
-                                 command=lambda: load_from_file(menu_frame))
+                                 command=lambda: load_from_file(menu_frame, False))
     menu_load_button.grid(row=4, column=0, columnspan=2)
 
     for child in menu_frame.winfo_children():
@@ -255,7 +255,7 @@ def confirmation_ui(from_file: bool = False):
                                    foreground=WHITE,
                                    activebackground=COLOR2_SHADE,
                                    activeforeground=WHITE,
-                                   command=lambda: load_from_file(frame))
+                                   command=lambda: load_from_file(frame, True))
     yes_button.grid(row=0, column=0)
 
     no_button = tk.Button(sub_frame, text="No", font=FONT_MEDIUM, width=width,
@@ -543,11 +543,12 @@ def clear_input() -> None:
             entry["background"] = DEFAULT_ENTRY_COLOR
 
 
-def load_from_file(frame: tk.Frame) -> None:
+def load_from_file(frame: tk.Frame, from_confirmation_ui: bool) -> None:
     """Load a possible sudoku grid from file and check if it is 
     compatible with the expected format and can be solved."""
     frame.destroy()
-    main_frame.destroy()
+    if from_confirmation_ui:
+        main_frame.destroy()
 
     path = filedialog.askopenfilename()
 
