@@ -6,23 +6,6 @@ from sudoku import Sudoku
 from tkinter import filedialog
 
 
-def on_enter(e):
-    """Change the background color when hovering over a Button.
-    
-    Only when button is not disabled."""
-    if e.widget["state"] != tk.DISABLED:
-        e.widget['background'] = COLOR2_SHADE
-
-
-def on_leave(e):
-    """Reset the background color when not hovering over a Button 
-    anymore.
-    
-    Only when button is not disabled."""
-    if e.widget["state"] != tk.DISABLED:
-        e.widget['background'] = COLOR2
-
-
 def menu_ui() -> None:
     """Create the menu frame that appears when starting this program."""
     menu_frame = tk.Frame(root, borderwidth=1, relief=tk.SOLID,
@@ -53,16 +36,16 @@ def menu_ui() -> None:
 
     button_width = 18
     menu_generate_button = tk.Button(menu_frame, text="Generate New",
-                                       justify=tk.CENTER, font=FONT_MEDIUM,
-                                       width=button_width,
-                                       background=COLOR2,
-                                       foreground=WHITE,
-                                       activebackground=COLOR2_SHADE,
-                                       activeforeground=WHITE,
-                                       takefocus=1,
-                                       highlightcolor=COLOR2_SHADE,
-                                       command=lambda: initialize_sudoku(menu_frame,
-                                                                         difficulty.get()))
+                                     justify=tk.CENTER, font=FONT_MEDIUM,
+                                     width=button_width,
+                                     background=COLOR2,
+                                     foreground=WHITE,
+                                     activebackground=COLOR2_SHADE,
+                                     activeforeground=WHITE,
+                                     takefocus=1,
+                                     highlightcolor=COLOR2_SHADE,
+                                     command=lambda: initialize_sudoku(menu_frame,
+                                                                       difficulty.get()))
     menu_generate_button.grid(row=2, column=0, columnspan=2)
 
     menu_label2 = tk.Label(menu_frame, text="or", font=FONT_SMALL,
@@ -82,7 +65,7 @@ def menu_ui() -> None:
 
     for child in menu_frame.winfo_children():
         child.grid_configure(padx=2.5, pady=5)
-        
+
         if isinstance(child, tk.Button):
             child.bind("<Enter>", on_enter)
             child.bind("<Leave>", on_leave)
@@ -286,7 +269,7 @@ def confirmation_ui(from_file: bool = False):
 
     for child in sub_frame.winfo_children():
         child.grid_configure(padx=5, pady=(15, 20))
-        
+
         if isinstance(child, tk.Button):
             child.bind("<Enter>", on_enter)
             child.bind("<Leave>", on_leave)
@@ -342,18 +325,32 @@ def difficulty_scale_ui(old_frame: tk.Frame):
             child.grid_configure(pady=5)
 
 
-def initialize_sudoku(frame: tk.Frame, difficulty: float,
-                      convert=True) -> None:
+def on_enter(e):
+    """Change the background color when hovering over a Button.
+
+    Only when button is not disabled."""
+    if e.widget["state"] != tk.DISABLED:
+        e.widget['background'] = COLOR2_SHADE
+
+
+def on_leave(e):
+    """Reset the background color when not hovering over a Button 
+    anymore.
+
+    Only when button is not disabled."""
+    if e.widget["state"] != tk.DISABLED:
+        e.widget['background'] = COLOR2
+
+
+def initialize_sudoku(frame: tk.Frame, difficulty: float) -> None:
     """Initialize the sudoku UI with the given difficulty.
 
     Sudoku can only be made with difficulty values greater than 0 and 
     lower than 1, therefore it is necessary to change the difficulty
     values when they are provided via a scale."""
     frame.destroy()
-    if convert:
-        difficulty = convert_slider_difficulty(difficulty)
-    else:
-        main_frame.destroy()
+
+    difficulty = convert_slider_difficulty(difficulty)
 
     global solution_count
     generated_sudoku_count = 1
@@ -362,13 +359,14 @@ def initialize_sudoku(frame: tk.Frame, difficulty: float,
         unsolved_sudoku = Sudoku(3, seed=random.randint(
             1, 1_000_000)).difficulty(difficulty)
         solve_and_count_solutions(unsolved_sudoku.board)
-        
+
         # found a sudoku that has only a single solution
         if solution_count == 1:
             break
-        print(f"Generated Sudoku {generated_sudoku_count} had multiple solutions")
+        print(
+            f"Generated Sudoku {generated_sudoku_count} had multiple solutions")
         generated_sudoku_count += 1
-        
+
     solved_sudoku = unsolved_sudoku.solve()
     sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
 
@@ -377,7 +375,7 @@ def solve_and_count_solutions(board):
     global solution_count
     if solution_count > 1:
         return
-    
+
     for y in range(9):
         for x in range(9):
             if board[y][x] is None:
@@ -388,20 +386,20 @@ def solve_and_count_solutions(board):
                         board[y][x] = None
                 return
     solution_count += 1
-    
-    
+
+
 def possible_value_for_cell(y, x, n, board):
     """Check whether a given value is possible in the given cell."""
     # check row
     for i in range(9):
         if board[y][i] == n:
             return False
-        
+
     # check column
     for i in range(9):
         if board[i][x] == n:
             return False
-        
+
     # check square
     y0 = (y//3) * 3
     x0 = (x//3) * 3
@@ -549,6 +547,7 @@ def load_from_file(frame: tk.Frame) -> None:
     """Load a possible sudoku grid from file and check if it is 
     compatible with the expected format and can be solved."""
     frame.destroy()
+    main_frame.destroy()
 
     path = filedialog.askopenfilename()
 
@@ -574,6 +573,15 @@ def load_from_file(frame: tk.Frame) -> None:
             unsolved_sudoku = Sudoku(3, 3, board=board)
             try:
                 solved_sudoku = unsolved_sudoku.solve(True)
+
+                global solution_count
+                solution_count = 0
+                solve_and_count_solutions(unsolved_sudoku.board)
+                if solution_count == 1:
+                    print("Sudoku from file has a single solution.")
+                else:
+                    print("Sudoku from file has multiple solutions.")
+
                 sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
             except Exception:
                 root.destroy()
@@ -677,6 +685,7 @@ if __name__ == "__main__":
     root = tk.Tk()
 
     solution_count = 0
+
     FAIL_MESSAGE = "You can do better!"
     SUCCESS_MESSAGE = "Good job!"
     ALLOWED_CHARS = [str(x) for x in range(1, 10)]

@@ -229,18 +229,15 @@ def difficulty_scale_ui(old_frame: ttk.Frame):
             child.grid_configure(pady=5)
 
 
-def initialize_sudoku(frame: ttk.Frame, difficulty: float,
-                      convert=True) -> None:
+def initialize_sudoku(frame: ttk.Frame, difficulty: float) -> None:
     """Initialize the sudoku UI with the given difficulty.
 
     Sudoku can only be made with difficulty values greater than 0 and 
     lower than 1, therefore it is necessary to change the difficulty
     values when they are provided via a scale."""
     frame.destroy()
-    if convert:
-        difficulty = convert_slider_difficulty(difficulty)
-    else:
-        main_frame.destroy()
+
+    difficulty = convert_slider_difficulty(difficulty)
 
     global solution_count
     generated_sudoku_count = 1
@@ -439,6 +436,7 @@ def load_from_file(frame: ttk.Frame) -> None:
     """Load a possible sudoku grid from file and check if it is 
     compatible with the expected format and can be solved."""
     frame.destroy()
+    main_frame.destroy()
 
     path = filedialog.askopenfilename()
 
@@ -464,6 +462,15 @@ def load_from_file(frame: ttk.Frame) -> None:
             unsolved_sudoku = Sudoku(3, 3, board=board)
             try:
                 solved_sudoku = unsolved_sudoku.solve(True)
+
+                global solution_count
+                solution_count = 0
+                solve_and_count_solutions(unsolved_sudoku.board)
+                if solution_count == 1:
+                    print("Sudoku from file has a single solution.")
+                else:
+                    print("Sudoku from file has multiple solutions.")
+
                 sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
             except Exception:
                 root.destroy()
@@ -613,7 +620,7 @@ if __name__ == "__main__":
     root.rowconfigure(index=0, weight=1)
 
     style = ttk.Style()
-    print(style.theme_names())
+    # print(style.theme_names())
     style.theme_use("default")
 
     style.configure("TFrame", background=WHITE)
