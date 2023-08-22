@@ -251,7 +251,7 @@ def initialize_sudoku(frame: ttk.Frame, difficulty: float) -> None:
         if solution_count == 1:
             break
         print(
-            f"Generated Sudoku {generated_sudoku_count} had multiple solutions")
+            f"Generated Sudoku {generated_sudoku_count} had multiple solutions.")
         generated_sudoku_count += 1
 
     solved_sudoku = unsolved_sudoku.solve()
