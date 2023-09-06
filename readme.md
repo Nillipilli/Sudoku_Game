@@ -9,6 +9,7 @@ This document provides an overview and explanation of the code for a Sudoku puzz
 Before running the project, install the required dependencies using pip:
 
 ``` bash
+# tk is only required if you are not using Python 3.7 or higher
 pip install tk
 pip install py-sudoku
 ```
