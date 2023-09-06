@@ -2,9 +2,36 @@
 
 This document provides an overview and explanation of the code for a Sudoku puzzle game implementation using the **tkinter library** in Python.
 
-## Contents
+## How to run
 
-### Basics
+### Install Dependencies
+
+Before running the project, install the required dependencies using pip:
+
+``` bash
+pip install tk
+pip install py-sudoku
+```
+
+### Choose User Interface
+
+This Sudoku puzzle game provides two user interfaces - one with traditional tkinter widgets and another with newer ttk widgets.
+
+#### Traditional widgets
+
+``` bash
+python tk_sudoku.py
+```
+
+#### Modern widgets
+
+``` bash
+python ttk_sudoku.py
+```
+
+## Content
+
+### General Information
 
 - `tkinter`: A library for creating User Interfaces in Python. This project contains one implementation using old tkinter widgets and another one using the newer ttk widgets.
 
