@@ -223,7 +223,7 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
     update_timer()
 
 
-def confirmation_ui(from_file: bool = False):
+def confirmation_ui(from_file: bool = False) -> None:
     """Create a screen that asks a user for confirmation if they really
     want to load/generate a new sudoku."""
     frame = tk.Frame(root, borderwidth=1, relief=tk.SOLID, padx=50, pady=50,
@@ -280,7 +280,7 @@ def confirmation_ui(from_file: bool = False):
     frame.grab_set()
 
 
-def difficulty_scale_ui(old_frame: tk.Frame):
+def difficulty_scale_ui(old_frame: tk.Frame) -> None:
     """Let the user select the difficulty of the newly generated 
     Sudoku."""
     old_frame.destroy()
@@ -325,7 +325,7 @@ def difficulty_scale_ui(old_frame: tk.Frame):
             child.grid_configure(pady=5)
 
 
-def on_enter(e):
+def on_enter(e) -> None:
     """Change the background color when hovering over a Button.
 
     Only when button is not disabled."""
@@ -333,7 +333,7 @@ def on_enter(e):
         e.widget['background'] = COLOR2_SHADE
 
 
-def on_leave(e):
+def on_leave(e) -> None:
     """Reset the background color when not hovering over a Button 
     anymore.
 
@@ -371,7 +371,7 @@ def initialize_sudoku(frame: tk.Frame, difficulty: float) -> None:
     sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
 
 
-def solve_and_count_solutions(board):
+def solve_and_count_solutions(board) -> None:
     global solution_count
     if solution_count > 1:
         return
@@ -388,7 +388,7 @@ def solve_and_count_solutions(board):
     solution_count += 1
 
 
-def possible_value_for_cell(y, x, n, board):
+def possible_value_for_cell(y, x, n, board) -> bool:
     """Check whether a given value is possible in the given cell."""
     # check row
     for i in range(9):
@@ -635,7 +635,7 @@ def check_sudoku_solved() -> bool:
     return False
 
 
-def lock_game_ui(message: str, color: str):
+def lock_game_ui(message: str, color: str) -> None:
     """Lock most of the game UI widgets after sudoku is solved.
 
     Bonus: If ERROR_THRESHOLD is reached or user pressed on 

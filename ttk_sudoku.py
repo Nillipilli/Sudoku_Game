@@ -161,7 +161,7 @@ def sudoku_ui(unsolved_sudoku_board: list[list[int | None]],
     update_timer()
 
 
-def confirmation_ui(from_file: bool = False):
+def confirmation_ui(from_file: bool = False) -> None:
     """Create a screen that asks a user for confirmation if they really
     want to load/generate a new sudoku."""
     frame = ttk.Frame(root, style="Outmost.TFrame",
@@ -197,7 +197,7 @@ def confirmation_ui(from_file: bool = False):
     frame.grab_set()
 
 
-def difficulty_scale_ui(old_frame: ttk.Frame):
+def difficulty_scale_ui(old_frame: ttk.Frame) -> None:
     """Let the user select the difficulty of the newly generated 
     Sudoku."""
     old_frame.destroy()
@@ -258,7 +258,7 @@ def initialize_sudoku(frame: ttk.Frame, difficulty: float) -> None:
     sudoku_ui(unsolved_sudoku.board, solved_sudoku.board)
 
 
-def solve_and_count_solutions(board):
+def solve_and_count_solutions(board) -> None:
     global solution_count
     if solution_count > 1:
         return
@@ -275,7 +275,7 @@ def solve_and_count_solutions(board):
     solution_count += 1
 
 
-def possible_value_for_cell(y, x, n, board):
+def possible_value_for_cell(y, x, n, board) -> bool:
     """Check whether a given value is possible in the given cell."""
     # check row
     for i in range(9):
@@ -524,7 +524,7 @@ def check_sudoku_solved() -> bool:
     return False
 
 
-def lock_game_ui(message: str, color: str):
+def lock_game_ui(message: str, color: str) -> None:
     """Lock most of the game UI widgets after sudoku is solved.
 
     Bonus: If ERROR_THRESHOLD is reached or user pressed on 
