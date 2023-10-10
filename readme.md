@@ -93,7 +93,12 @@ Here are some snapshots of the Sudoku puzzle game to give you a glimpse of the u
 ### Load From File
 
 ![Load From File](snapshots/tk_load_from_file.png)
-> Load a custom made sudoku from file. Also a nice feature when struggling with a Sudoku puzzle in a newspaper etc.
+> Load a custom made sudoku from a file. This also helps when struggling with a Sudoku puzzle in a newspaper. :slightly_smiling_face:
+
+### File Format Example
+
+![File Format Example](snapshots/file_format_example.png)
+> Create a .txt file with exactly 9 lines. Each line needs to have exactly 9 numbers ranging from 0-9. 0 indicates an empty field.
 
 ### Single Solution Check
 
