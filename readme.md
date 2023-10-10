@@ -93,7 +93,7 @@ Here are some snapshots of the Sudoku puzzle game to give you a glimpse of the u
 ### Load From File
 
 ![Load From File](snapshots/tk_load_from_file.png)
-> Load a custom made sudoku from a file. This also helps when struggling with a Sudoku puzzle in a newspaper. :slightly_smiling_face:
+> Load a custom made sudoku from a file. This also helps when struggling with a Sudoku puzzle in a newspaper.
 
 ### File Format Example
 
